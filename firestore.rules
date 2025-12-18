@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // User Profiles: Users can only read/write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Organizations: Members can read, Owners can write
+    // Simplified for MVP: Any authenticated user can create/read for now
+    match /organizations/{orgId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Sites: Belong to Org
+    match /sites/{siteId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Generic fallback (Lock down in real production)
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

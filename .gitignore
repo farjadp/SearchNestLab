@@ -1,0 +1,9 @@
+node_modules
+dist
+.next
+.turbo
+.env
+.DS_Store
+coverage
+
+**/service-account.json

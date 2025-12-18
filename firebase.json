@@ -1,0 +1,17 @@
+{
+    "hosting": {
+        "site": "searchnestlab-d9c4d",
+        "public": "apps/web/out",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ]
+    }
+}

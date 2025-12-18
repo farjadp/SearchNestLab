@@ -1,0 +1,23 @@
+{
+    "files": [],
+    "references": [
+        {
+            "path": "./apps/web"
+        },
+        {
+            "path": "./apps/api"
+        },
+        {
+            "path": "./apps/worker"
+        },
+        {
+            "path": "./packages/ui"
+        },
+        {
+            "path": "./packages/sdk"
+        },
+        {
+            "path": "./packages/schema"
+        }
+    ]
+}

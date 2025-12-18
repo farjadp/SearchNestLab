@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --background: #09090b;
+    --foreground: #ededed;
+}
+
+body {
+    color: var(--foreground);
+    background: var(--background);
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    .glass {
+        @apply bg-zinc-900/40 backdrop-blur-xl border border-zinc-100/10;
+    }
+
+    .glass-hover {
+        @apply transition-all duration-300 hover:bg-zinc-800/50 hover:border-zinc-100/20 hover:shadow-lg hover:shadow-emerald-500/10;
+    }
+
+    .text-gradient {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-zinc-200 to-zinc-500;
+    }
+
+    .text-gradient-primary {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400;
+    }
+}
