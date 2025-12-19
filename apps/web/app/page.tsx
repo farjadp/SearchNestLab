@@ -9,18 +9,33 @@
 import React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-    Compass,
-    Activity,
-    Fingerprint,
-    Radio,
-    Box,
-    ArrowUpRight,
-    LayoutDashboard,
-    Cpu
+import { 
+  Compass, 
+  Activity, 
+  Fingerprint, 
+  Radio, 
+  Box, 
+  ArrowUpRight,
+  LayoutDashboard,
+  Cpu,
+  Zap,
+  Shield,
+  BarChart3,
+  Globe,
+  ChevronRight
 } from "lucide-react";
 
+
+
 export default function Home() {
+
+    const fadeInUp = {
+      initial: { opacity: 0, y: 20 },
+      whileInView: { opacity: 1, y: 0 },
+      viewport: { once: true },
+      transition: { duration: 0.6 }
+    };
+    
     return (
         <div className="min-h-screen bg-[#020202] text-white selection:bg-lime-400 selection:text-black font-sans overflow-x-hidden">
 
@@ -103,64 +118,150 @@ export default function Home() {
                     </div>
                 </section>
 
-                {/* Floating Abstract Dashboard Section */}
-                <section className="mt-40 max-w-7xl mx-auto">
-                    <div className="relative group">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-lime-400/20 to-blue-400/20 rounded-[3rem] blur-2xl opacity-50" />
-                        <div className="relative aspect-[21/9] rounded-[3rem] border border-white/10 bg-[#050505] p-2 overflow-hidden">
-                            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px]" />
-                            <div className="relative h-full flex items-center justify-around px-20">
-                                <div className="space-y-4">
-                                    <div className="h-2 w-32 bg-lime-400 rounded-full" />
-                                    <div className="h-10 w-48 bg-white/5 rounded-2xl border border-white/10" />
+        {/* 5. Fixed & Enhanced Dashboard Section */}
+        <section className="mt-32 md:mt-48 max-w-7xl mx-auto">
+            <div className="relative group px-4">
+                <div className="absolute -inset-4 bg-gradient-to-r from-lime-400/10 via-blue-500/10 to-purple-500/10 rounded-[3rem] blur-3xl opacity-50 transition-opacity duration-1000" />
+
+                <div className="relative min-h-[450px] md:aspect-[21/9] rounded-[2.5rem] md:rounded-[3.5rem] border border-white/10 bg-[#050505] p-1 overflow-hidden shadow-2xl">
+                    {/* Grid Background */}
+                    <div className="absolute inset-0 opacity-10" 
+                         style={{ backgroundImage: `radial-gradient(#ffffff 1px, transparent 1px)`, backgroundSize: '30px 30px' }} />
+
+                    <div className="relative h-full w-full flex flex-col md:flex-row items-center justify-between px-8 md:px-20 py-12 gap-12">
+                        
+                        {/* Left Side: Stats */}
+                        <div className="w-full md:w-auto space-y-8 z-10 text-left">
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-lime-400 animate-pulse" />
+                                    <span className="text-[10px] font-black tracking-[0.3em] uppercase text-zinc-500">Live Telemetry</span>
                                 </div>
-                                <div className="w-px h-32 bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-                                <div className="flex gap-4">
-                                    <div className="w-16 h-16 rounded-full border border-lime-400/30 flex items-center justify-center text-lime-400">
-                                        <Cpu />
-                                    </div>
-                                    <div className="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center text-zinc-500">
-                                        <LayoutDashboard />
-                                    </div>
+                                <div className="h-[2px] w-24 bg-gradient-to-r from-lime-400 to-transparent" />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-md">
+                                    <div className="text-zinc-500 text-[8px] uppercase font-bold mb-1 tracking-widest">Accuracy</div>
+                                    <div className="text-2xl font-mono text-white font-black">99.9%</div>
+                                </div>
+                                <div className="bg-white/5 border border-white/10 p-5 rounded-2xl backdrop-blur-md">
+                                    <div className="text-zinc-500 text-[8px] uppercase font-bold mb-1 tracking-widest">Latency</div>
+                                    <div className="text-2xl font-mono text-lime-400 font-black">18ms</div>
                                 </div>
                             </div>
+
+                            <div className="h-14 w-full md:w-72 bg-white/5 rounded-2xl border border-white/10 flex items-center px-4 gap-4">
+                                <div className="flex gap-1">
+                                    {[1,2,3,4,5].map(i => <div key={i} className="w-1 h-3 bg-lime-400/40 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.1}s` }} />)}
+                                </div>
+                                <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest leading-none">Scanning 10,000 Nodes/sec</span>
+                            </div>
+                        </div>
+
+                        {/* Middle: Visual Divider */}
+                        <div className="hidden md:block w-px h-48 bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+
+                        {/* Right Side: Interactive Nodes */}
+                        <div className="relative flex flex-wrap justify-center gap-6 md:gap-10 z-10">
+                            {[
+                                { icon: <Cpu size={24} />, label: "Engine", color: "text-lime-400", border: "border-lime-400/30", path: "/platform/engine" },
+                                { icon: <BarChart3 size={24} />, label: "Analyze", color: "text-blue-400", border: "border-blue-400/30", path: "/platform/analytics" },
+                                { icon: <Shield size={24} />, label: "Secure", color: "text-purple-400", border: "border-purple-400/30", path: "/legal/security" }
+                            ].map((node, idx) => (
+                                <Link key={idx} href={node.path} className="flex flex-col items-center gap-3 group/node">
+                                    <motion.div 
+                                        whileHover={{ y: -5, scale: 1.1 }}
+                                        className={`w-16 h-16 md:w-20 md:h-20 rounded-full border ${node.border} bg-white/5 flex items-center justify-center ${node.color} shadow-lg backdrop-blur-xl transition-all group-hover/node:bg-white/10`}
+                                    >
+                                        {node.icon}
+                                    </motion.div>
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-zinc-500 group-hover/node:text-white">{node.label}</span>
+                                </Link>
+                            ))}
                         </div>
                     </div>
-                </section>
-            </main>
-
-            {/* The Bottom Dock (Action Links) */}
-            <div className="fixed bottom-8 inset-x-0 z-[100] flex justify-center px-6">
-                <div className="bg-black/40 backdrop-blur-2xl border border-white/10 p-2 rounded-[2rem] flex items-center gap-1 shadow-2xl">
-                    {[
-                        { label: "Overview", href: "/internal/overview" },
-                        { label: "Systems", href: "/internal/systems" },
-                        { label: "Database", href: "/internal/db" },
-                        { label: "Audit", href: "/internal/audit" },
-                    ].map((link, i) => (
-                        <Link key={i} href={link.href}>
-                            <button className="px-6 py-3 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white hover:bg-white/5 transition-all">
-                                {link.label}
-                            </button>
-                        </Link>
-                    ))}
-                    <div className="w-px h-6 bg-white/10 mx-2" />
-                    <Link href="/help">
-                        <button className="p-3 text-lime-400 hover:scale-110 transition-transform"><ArrowUpRight size={18} /></button>
-                    </Link>
                 </div>
             </div>
+        </section>
 
-            <footer className="relative z-10 py-20 px-10 text-center border-t border-white/5">
-                <div className="text-[10vw] font-black text-white/5 tracking-tighter mb-10">SEARCHNEST</div>
-                <div className="flex justify-center gap-12 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600">
-                    <Link href="/about" className="hover:text-white transition-colors">About</Link>
-                    <Link href="/team" className="hover:text-white transition-colors">Team</Link>
-                    <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
-                    <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+        {/* 6. Global Reach Section */}
+        <section className="mt-40 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
+            <motion.div {...fadeInUp} className="space-y-8 text-left">
+                <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">GLOBAL <br/><span className="text-lime-400">IMPACT.</span></h2>
+                <p className="text-zinc-500 text-lg leading-relaxed max-w-md">Our neural network processes search intent across 140 countries, delivering insights in milliseconds.</p>
+                <Link href="/platform/network" className="inline-flex items-center gap-3 text-xs font-black uppercase tracking-[0.3em] text-white hover:text-lime-400 transition-colors group">
+                  Explore Network <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+            </motion.div>
+            <div className="relative aspect-square flex items-center justify-center">
+                <div className="absolute inset-0 bg-lime-400/5 blur-[120px] rounded-full" />
+                <Globe size={200} className="text-white/10 animate-[spin_60s_linear_infinite]" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-32 h-32 border border-lime-400/20 rounded-full animate-ping" />
                 </div>
-            </footer>
+            </div>
+        </section>
 
+      </main>
+
+      {/* 7. The Bottom Dock (Action Links) */}
+      <div className="fixed bottom-8 inset-x-0 z-[100] flex justify-center px-6">
+        <motion.div 
+          initial={{ y: 100 }}
+          animate={{ y: 0 }}
+          className="bg-black/60 backdrop-blur-2xl border border-white/10 p-2 rounded-[2.5rem] flex items-center gap-1 shadow-2xl"
+        >
+          {[
+            { label: "Overview", href: "/platform/overview" },
+            { label: "Pricing", href: "/pricing" },
+            { label: "Docs", href: "/docs" },
+            { label: "Support", href: "/support" },
+          ].map((link, i) => (
+            <Link key={i} href={link.href}>
+              <button className="px-5 md:px-7 py-3 rounded-[1.8rem] text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-white hover:bg-white/5 transition-all">
+                {link.label}
+              </button>
+            </Link>
+          ))}
+          <div className="w-px h-6 bg-white/10 mx-2" />
+          <Link href="/help">
+            <button className="p-3 text-lime-400 hover:scale-110 transition-transform"><ArrowUpRight size={18} /></button>
+          </Link>
+        </motion.div>
+      </div>
+
+      {/* 8. Footer */}
+      <footer className="relative z-10 py-32 px-10 text-center border-t border-white/5 bg-[#010101]">
+        <div className="text-[12vw] font-black text-white/[0.03] tracking-tighter mb-16 select-none uppercase">SEARCHNEST</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 max-w-5xl mx-auto mb-20 text-left">
+            <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-lime-400 uppercase tracking-widest">Platform</h4>
+                <div className="flex flex-col gap-2 text-xs text-zinc-500 font-bold">
+                    <Link href="/platform/engine" className="hover:text-white transition-colors">Crawl Engine</Link>
+                    <Link href="/platform/telemetry" className="hover:text-white transition-colors">Telemetry</Link>
+                </div>
+            </div>
+            <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-lime-400 uppercase tracking-widest">Company</h4>
+                <div className="flex flex-col gap-2 text-xs text-zinc-500 font-bold">
+                    <Link href="/about" className="hover:text-white transition-colors">About Lab</Link>
+                    <Link href="/careers" className="hover:text-white transition-colors">Careers</Link>
+                </div>
+            </div>
+            <div className="space-y-4">
+                <h4 className="text-[10px] font-black text-lime-400 uppercase tracking-widest">Legal</h4>
+                <div className="flex flex-col gap-2 text-xs text-zinc-500 font-bold">
+                    <Link href="/legal/privacy" className="hover:text-white transition-colors">Privacy</Link>
+                    <Link href="/legal/terms" className="hover:text-white transition-colors">Terms</Link>
+                </div>
+            </div>
+            <div className="space-y-4 text-right">
+                <div className="text-xs font-black text-white">EST. 2025</div>
+                <div className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest">SearchNest Labs Canada</div>
+            </div>
         </div>
-    );
+      </footer>
+      </div>
+  );
 }
