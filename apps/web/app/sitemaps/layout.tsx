@@ -1,43 +1,30 @@
 // ============================================================================
-// Hardware Source: apps/web/app/sites/[id]/layout.tsx
-// Version: 1.1.0 — 2025-12-17
-// Why: Sidebar layout for site management
-// Env / Identity: N/A
+// Hardware Source: apps/web/app/sitemaps/layout.tsx
+// Version: 1.0.0
+// Why: Layout for the Sitemaps tool
 // ============================================================================
 
 "use client";
 
-import React, { use } from "react"; // React 19 use API
+import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-
+import { usePathname, useRouter } from "next/navigation";
 import {
     LayoutDashboard,
-    AlertTriangle,
-    KeyRound,
-    Settings,
-    FileText,
-    Users,
-    BarChart3,
-    Zap,
-    CreditCard,
-    LogOut,
     Network,
+    LogOut,
+    Plus,
     BookOpen
 } from "lucide-react";
 import { useAuth } from "@/src/contexts/AuthContext";
 import { auth } from "@/src/lib/firebase";
 import { signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
 
-export default function SiteLayout({
+export default function SitemapsLayout({
     children,
-    params,
 }: {
     children: React.ReactNode;
-    params: Promise<{ id: string }>;
 }) {
-    const { id } = use(params);
     const pathname = usePathname();
     const router = useRouter();
     const { user } = useAuth();
@@ -48,16 +35,9 @@ export default function SiteLayout({
     };
 
     const links = [
-        { href: `/sites/${id}/dashboard`, label: "Dashboard", icon: LayoutDashboard },
-        { href: `/sites/${id}/issues`, label: "Issues", icon: AlertTriangle },
-        { href: `/sites/${id}/keywords`, label: "Keywords", icon: KeyRound },
-        { href: `/sites/${id}/optimize`, label: "Optimization", icon: Zap },
-        { href: `/sites/${id}/reports`, label: "Reports", icon: FileText },
-        { href: `/sites/${id}/leads`, label: "Leads", icon: Users },
-        { href: `/sites/${id}/settings`, label: "Settings", icon: Settings },
-        { href: `/sitemaps`, label: "Sitemaps", icon: Network },
+        { href: `/sites`, label: "All Sites", icon: LayoutDashboard },
+        { href: `/sitemaps`, label: "Sitemap Generator", icon: Network },
         { href: `/guide`, label: "Guide", icon: BookOpen },
-        { href: `/billing`, label: "Billing", icon: CreditCard },
     ];
 
     return (
@@ -72,7 +52,7 @@ export default function SiteLayout({
 
                 <nav className="flex-1 p-4 space-y-2">
                     {links.map((link) => {
-                        const isActive = pathname === link.href; // exact match or startsWith logic
+                        const isActive = pathname.startsWith(link.href);
                         const Icon = link.icon;
                         return (
                             <Link
@@ -100,7 +80,6 @@ export default function SiteLayout({
                                 <div className="text-xs font-medium text-white truncate max-w-[100px]" title={user?.email || ''}>
                                     {user?.email || 'User'}
                                 </div>
-                                <div className="text-[10px] text-zinc-400">Pro Plan</div>
                             </div>
                         </div>
                         <button

@@ -7,8 +7,12 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
+    // Sitemaps: Users can read/write their own
+    match /sitemaps/{sitemapId} {
+      allow read, write: if request.auth != null;
+    }
+
     // Organizations: Members can read, Owners can write
-    // Simplified for MVP: Any authenticated user can create/read for now
     match /organizations/{orgId} {
       allow read, write: if request.auth != null;
     }

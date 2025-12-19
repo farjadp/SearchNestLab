@@ -137,6 +137,119 @@ const worker = new Worker('scanner', async (job) => {
             status: 'active'
         });
     }
+    else if (job.name === 'generate-sitemap') {
+        const { sitemapId, url, userId } = job.data;
+        console.log(`Generating sitemap for ${url} (Sitemap ID: ${sitemapId})`);
+
+        // Initialize Firestore
+        if (!admin.apps.length) {
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-var-requires
+                const sa = require('../service-account.json');
+                admin.initializeApp({
+                    credential: admin.credential.cert(sa),
+                    storageBucket: "searchnest-lab.firebasestorage.app" // Ensure this is correct or passed via env in future
+                });
+            } catch (e) {
+                console.error("Worker failed to load service-account.json");
+                return;
+            }
+        }
+        const db = admin.firestore();
+        const bucket = admin.storage().bucket();
+
+        // Update status to processing
+        await db.collection('sitemaps').doc(sitemapId).update({
+            status: 'processing',
+            updatedAt: new Date()
+        });
+
+        try {
+            const visited = new Set<string>();
+            const queue: string[] = [url];
+            const urls: string[] = [];
+            const domain = new URL(url).hostname;
+            const limit = 500; // Hard limit for sitemap generation for now
+
+            const cheerio = require('cheerio');
+
+            while (queue.length > 0 && visited.size < limit) {
+                const currentUrl = queue.shift()!;
+                const normalizedUrl = currentUrl.replace(/\/$/, "");
+
+                if (visited.has(normalizedUrl)) continue;
+                visited.add(normalizedUrl);
+                urls.push(normalizedUrl);
+
+                try {
+                    const res = await fetch(currentUrl);
+                    if (res.status !== 200) continue;
+
+                    const html = await res.text();
+                    const $ = cheerio.load(html);
+
+                    $('a').each((_: any, element: any) => {
+                        const href = $(element).attr('href');
+                        if (href) {
+                            try {
+                                const absoluteUrl = new URL(href, currentUrl).href;
+                                if (new URL(absoluteUrl).hostname === domain && !visited.has(absoluteUrl.replace(/\/$/, ""))) {
+                                    queue.push(absoluteUrl);
+                                }
+                            } catch (e) {
+                                // Invalid URL
+                            }
+                        }
+                    });
+                } catch (e) {
+                    console.error(`Failed to crawl ${currentUrl} for sitemap`);
+                }
+                // Be nice to the server
+                await new Promise(r => setTimeout(r, 200));
+            }
+
+            // Generate XML
+            let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+            urls.forEach(u => {
+                xml += `  <url>\n    <loc>${u}</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n  </url>\n`;
+            });
+            xml += `</urlset>`;
+
+            // Upload to Storage
+            const file = bucket.file(`sitemaps/${userId}/${sitemapId}.xml`);
+            await file.save(xml, {
+                contentType: 'application/xml',
+                public: true
+            });
+
+            // Get Public URL
+            // Note: In a real prod env, we might want signed URLs or make the bucket public. 
+            // For now assuming we can make it public or use the media link.
+            // Using getSignedUrl or publicUrl depends on bucket config. 
+            // Let's try to get a signed URL for long expiry or just construct the public URL if public access is enabled.
+            // Assuming standard firebase storage public access for simplicty or Signed URL.
+            // Let's use a long-lived signed URL for simplicity in this "Lab" context.
+            const [signedUrl] = await file.getSignedUrl({
+                action: 'read',
+                expires: '03-01-2500'
+            });
+
+            await db.collection('sitemaps').doc(sitemapId).update({
+                status: 'completed',
+                fileUrl: signedUrl,
+                pageCount: urls.length,
+                updatedAt: new Date()
+            });
+
+        } catch (error: any) {
+            console.error(`Sitemap generation failed: ${error.message}`);
+            await db.collection('sitemaps').doc(sitemapId).update({
+                status: 'failed',
+                error: error.message,
+                updatedAt: new Date()
+            });
+        }
+    }
 }, { connection });
 
 worker.on('completed', job => {
