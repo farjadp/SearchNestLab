@@ -37,7 +37,9 @@ export default function Home() {
                     <div className="flex items-center gap-8">
                         <Link href="/" className="text-sm font-black tracking-widest text-lime-400">SEARCHNEST</Link>
                         <div className="hidden md:flex gap-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                            <Link href="/features" className="hover:text-white transition-all">Features</Link>
                             <Link href="/product" className="hover:text-white transition-all">Product</Link>
+                            <Link href="/roadmap" className="hover:text-white transition-all">Roadmap</Link>
                             <Link href="/pricing" className="hover:text-white transition-all">Pricing</Link>
                             <Link href="/about" className="hover:text-white transition-all">About</Link>
                             <Link href="/blog" className="hover:text-white transition-all">Blog</Link>
