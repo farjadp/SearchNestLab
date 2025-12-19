@@ -7,3 +7,5 @@ dist
 coverage
 
 **/service-account.json
+.env.production
+env.yaml

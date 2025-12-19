@@ -1,0 +1,68 @@
+FROM node:20-alpine AS base
+
+# 1. Prune dependencies
+FROM base AS pruner
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+RUN npm install -g turbo
+COPY . .
+RUN turbo prune web --docker
+
+# 2. Install dependencies
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy pruned lockfile and package.json's
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY --from=pruner /app/out/full/ .
+
+# 3. Build the project
+FROM installer AS builder
+WORKDIR /app
+COPY --from=installer /app .
+
+# Set Build-Time Env Vars (Next.js requires these during build)
+ENV NEXT_PUBLIC_FIREBASE_API_KEY="AIzaSyAIUK81MRZkQuTOSZ0AVAynaBy4DUGQ_MA"
+ENV NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="searchnestlab.firebaseapp.com"
+ENV NEXT_PUBLIC_FIREBASE_PROJECT_ID="searchnestlab"
+ENV NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="searchnestlab.firebasestorage.app"
+ENV NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="360622318170"
+ENV NEXT_PUBLIC_FIREBASE_APP_ID="1:360622318170:web:8ac1f1e44c1bde94ccee63"
+ENV NEXT_PUBLIC_API_URL="https://searchnest-web-1062816179152.us-central1.run.app"
+
+# Build the project
+RUN pnpm turbo run build --filter=web...
+
+# 4. Production image
+FROM base AS runner
+WORKDIR /app
+
+# Don't run production as root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
+
+COPY --from=builder /app/apps/web/public ./apps/web/public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+
+ENV NODE_ENV=production
+ENV PORT=8080
+ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 8080
+
+CMD ["node", "apps/web/server.js"]
