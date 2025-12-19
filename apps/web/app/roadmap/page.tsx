@@ -7,7 +7,7 @@ import { ArrowLeft, Rocket, Check, Clock, Sparkles } from "lucide-react";
 const ROADMAP = {
     past: {
         title: "Where We Started",
-        subtitle: "Q3 2024",
+        subtitle: "Q2 2025",
         items: [
             "Core crawler engine with distributed architecture",
             "Basic SEO audit functionality",
@@ -17,7 +17,7 @@ const ROADMAP = {
     },
     present: {
         title: "Currently Active",
-        subtitle: "Q4 2024 - Q1 2025",
+        subtitle: "Q4 2025 - Q1 2026",
         items: [
             "✅ Real-time sitemap generator with BullMQ queue processing",
             "✅ Multi-site dashboard with analytics",
@@ -31,7 +31,7 @@ const ROADMAP = {
     },
     future: [
         {
-            quarter: "Q2 2025",
+            quarter: "Q2 2026",
             title: "AI-Powered Insights",
             items: [
                 "GPT-4 content optimization suggestions",
@@ -41,7 +41,7 @@ const ROADMAP = {
             ]
         },
         {
-            quarter: "Q3 2025",
+            quarter: "Q3 2026",
             title: "Enterprise Features",
             items: [
                 "Advanced team workflows & approval systems",
@@ -51,7 +51,7 @@ const ROADMAP = {
             ]
         },
         {
-            quarter: "Q4 2025",
+            quarter: "Q4 2026",
             title: "Platform Expansion",
             items: [
                 "WordPress & Shopify plugins",

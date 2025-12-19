@@ -46,7 +46,7 @@ export default function Home() {
                         </div>
                     </div>
                     <div className="flex gap-4">
-                        <Link href="/login" className="text-[10px] uppercase font-bold text-zinc-400 self-center hover:text-white">Access</Link>
+                        <Link href="/signin" className="text-[10px] uppercase font-bold text-zinc-400 self-center hover:text-white">Access</Link>
                         <Link href="/pricing" className="bg-white text-black px-5 py-2 rounded-full text-[10px] font-black uppercase hover:bg-lime-400 transition-colors">Join Beta</Link>
                     </div>
                 </nav>
